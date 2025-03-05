@@ -3,28 +3,22 @@ from ultralytics import YOLO
 import time
 from pymavlink import mavutil
 
-# 初始化YOLOv8-nano模型
-model = YOLO('yolov8n.pt')
+model = YOLO('tunnelscan.pt')
 
 # 初始化摄像头
-cap = cv2.VideoCapture(0)  # 0表示默认摄像头，根据实际情况修改
+cap = cv2.VideoCapture(0) 
 
-# 连接无人机（示例使用串口连接）
-# 实际使用时需要修改端口和波特率
 # connection = mavutil.mavlink_connection('/dev/ttyACM0', baud=57600)
 
 # 检测参数配置
-min_width = 100    # 最小报警宽度（像素）
-min_height = 100   # 最小报警高度（像素）
+min_width = 300    # 最小报警宽度（像素）
+min_height = 300   # 最小报警高度（像素）
 log_file = 'detection_log.txt'  # 日志文件路径
 
 def get_drone_position():
-    """获取无人机当前位置信息（需要根据实际MAVLink协议调整）"""
     try:
-        # 示例获取位置信息，实际需要根据MAVLink消息格式解析
-        # msg = connection.recv_match(type='GLOBAL_POSITION_INT', blocking=True)
-        # return (msg.lat / 1e7, msg.lon / 1e7, msg.alt / 1e3)
-        return (0.0, 0.0, 0.0)  # 示例返回值
+        msg = connection.recv_match(type='GLOBAL_POSITION_INT', blocking=True)
+        return (msg.lat / 1e7, msg.lon / 1e7, msg.alt / 1e3)
     except Exception as e:
         print(f"获取位置失败: {e}")
         return None
@@ -73,7 +67,5 @@ while cap.isOpened():
                     geo_log = f"ALERT: {cls_name} 超过尺寸 @ 坐标: {position}"
                     write_log(geo_log)
                     print(geo_log)  # 控制台输出提示
-
-# 释放资源
 cap.release()
 print("检测程序已停止")
