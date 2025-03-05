@@ -42,7 +42,6 @@ while cap.isOpened():
     if not ret:
         break
     
-    # 执行YOLOv8检测
     results = model(frame)
     
     # 处理检测结果
